@@ -30,14 +30,14 @@ public class ConnectWeChat {
     @RequestMapping(value = "weChatReply", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
     public
     @ResponseBody
-    String chat(Model model, HttpServletResponse response, HttpServletRequest request) {
+    void chat(HttpServletRequest request, HttpServletResponse response) {
         boolean isGet = request.getMethod().toLowerCase().equals("get");
         if (isGet) {
             String signature = request.getParameter("signature");
             String timestamp = request.getParameter("timestamp");
             String nonce = request.getParameter("nonce");
             String echostr = request.getParameter("echostr");
-            return "success";
+            access(request, response);
         } else {
             // 进入POST聊天处理
             try {
@@ -47,7 +47,6 @@ public class ConnectWeChat {
                 e.printStackTrace();
             }
         }
-        return "success";
     }
 
     /**
@@ -108,8 +107,8 @@ public class ConnectWeChat {
         // 将xml内容转换为InputMessage对象
         InputMessage inputMsg = (InputMessage) xs.fromXML(xmlMsg.toString());
 
-        String servername = inputMsg.getToUserName();// 服务端
-        String custermname = inputMsg.getFromUserName();// 客户端
+        String serverName = inputMsg.getToUserName();// 服务端
+        String custermName = inputMsg.getFromUserName();// 客户端
         long createTime = inputMsg.getCreateTime();// 接收时间
         Long returnTime = Calendar.getInstance().getTimeInMillis() / 1000;// 返回时间
 
@@ -126,13 +125,14 @@ public class ConnectWeChat {
 
             StringBuffer str = new StringBuffer();
             str.append("<xml>");
-            str.append("<ToUserName><![CDATA[" + custermname + "]]></ToUserName>");
-            str.append("<FromUserName><![CDATA[" + servername + "]]></FromUserName>");
+            str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
+            str.append("<FromUserName><![CDATA[" + serverName + "]]></FromUserName>");
             str.append("<CreateTime>" + returnTime + "</CreateTime>");
             str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
             str.append("<Content><![CDATA[你说的是：" + inputMsg.getContent() + "，吗？]]></Content>");
             str.append("</xml>");
             System.out.println(str.toString());
+
             response.getWriter().write(str.toString());
         }
         // 获取并返回多图片消息
@@ -143,8 +143,8 @@ public class ConnectWeChat {
             System.out.println("消息id，64位整型：" + inputMsg.getMsgId());
 
             OutputMessage outputMsg = new OutputMessage();
-            outputMsg.setFromUserName(servername);
-            outputMsg.setToUserName(custermname);
+            outputMsg.setFromUserName(serverName);
+            outputMsg.setToUserName(custermName);
             outputMsg.setCreateTime(returnTime);
             outputMsg.setMsgType(msgType);
             ImageMessage images = new ImageMessage();
