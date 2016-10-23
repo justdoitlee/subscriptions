@@ -116,13 +116,6 @@ public class ConnectWeChat {
         String msgType = inputMsg.getMsgType();
         // 根据消息类型获取对应的消息内容
         if (msgType.equals(MsgType.Text.toString())) {
-            // 文本消息
-            System.out.println("开发者微信号：" + inputMsg.getToUserName());
-            System.out.println("发送方帐号：" + inputMsg.getFromUserName());
-            System.out.println("消息创建时间：" + inputMsg.getCreateTime() + new Date(createTime * 1000l));
-            System.out.println("消息内容：" + inputMsg.getContent());
-            System.out.println("消息Id：" + inputMsg.getMsgId());
-
             StringBuffer str = new StringBuffer();
             str.append("<xml>");
             str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
@@ -137,11 +130,6 @@ public class ConnectWeChat {
         }
         // 获取并返回多图片消息
         if (msgType.equals(MsgType.Image.toString())) {
-            System.out.println("获取多媒体信息");
-            System.out.println("多媒体文件id：" + inputMsg.getMediaId());
-            System.out.println("图片链接：" + inputMsg.getPicUrl());
-            System.out.println("消息id，64位整型：" + inputMsg.getMsgId());
-
             OutputMessage outputMsg = new OutputMessage();
             outputMsg.setFromUserName(serverName);
             outputMsg.setToUserName(custermName);
