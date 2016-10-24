@@ -30,7 +30,9 @@ public class ConnectWeChat {
     @RequestMapping(value = "weChatReply", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
     public
     @ResponseBody
-    void chat(HttpServletRequest request, HttpServletResponse response) {
+    void chat(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
         boolean isGet = request.getMethod().toLowerCase().equals("get");
         if (isGet) {
             String signature = request.getParameter("signature");
@@ -113,20 +115,18 @@ public class ConnectWeChat {
         Long returnTime = Calendar.getInstance().getTimeInMillis() / 1000;// 返回时间
 
         // 取得消息类型
-        String msgType = inputMsg.getMsgType();
-        // 根据消息类型获取对应的消息内容
-        if (msgType.equals(MsgType.Text.toString())) {
-            StringBuffer str = new StringBuffer();
-            str.append("<xml>");
-            str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
-            str.append("<FromUserName><![CDATA[" + serverName + "]]></FromUserName>");
-            str.append("<CreateTime>" + returnTime + "</CreateTime>");
-            str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-            str.append("<Content><![CDATA[你说的是：" + inputMsg.getContent() + "，吗？]]></Content>");
-            str.append("</xml>");
-            System.out.println(str.toString());
-
-            response.getWriter().write(str.toString());
+            String msgType = inputMsg.getMsgType();
+            // 根据消息类型获取对应的消息内容
+            if (msgType.equals(MsgType.Text.toString())) {
+                StringBuffer str = new StringBuffer();
+                str.append("<xml>");
+                str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
+                str.append("<FromUserName><![CDATA[" + serverName + "]]></FromUserName>");
+                str.append("<CreateTime>" + returnTime + "</CreateTime>");
+                str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
+                str.append("<Content><![CDATA[你说的是：" + inputMsg.getContent() + "，吗？]]></Content>");
+                str.append("</xml>");
+                response.getWriter().write(str.toString());
         }
         // 获取并返回多图片消息
         if (msgType.equals(MsgType.Image.toString())) {
