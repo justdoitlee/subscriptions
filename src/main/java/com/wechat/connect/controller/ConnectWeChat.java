@@ -1,5 +1,6 @@
 package com.wechat.connect.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.thoughtworks.xstream.XStream;
 import com.wechat.Utils.SerializeXmlUtil;
 import com.wechat.Utils.common.SHA1;
@@ -121,6 +122,8 @@ public class ConnectWeChat {
         // 根据消息类型获取对应的消息内容
         if (msgType.equals(MsgType.Text.toString())) {
             String resultStr = JuheRobor.getAnswerRequest(inputMsg.getContent());
+            //解析json字符串
+            Map maps = (Map) JSON.parse(resultStr);
             StringBuffer str = new StringBuffer();
             str.append("<xml>");
             str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
@@ -128,7 +131,7 @@ public class ConnectWeChat {
             str.append("<CreateTime>" + returnTime + "</CreateTime>");
             str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
 //                str.append("<Content><![CDATA[你说的是：" + inputMsg.getContent() + "，吗？]]></Content>");
-            str.append("<Content><![CDATA[" + resultStr + "]]></Content>");
+            str.append("<Content><![CDATA[" + maps.get("text") + "]]></Content>");
             str.append("</xml>");
             response.getWriter().write(str.toString());
         }
