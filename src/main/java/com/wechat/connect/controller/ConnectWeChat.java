@@ -120,23 +120,22 @@ public class ConnectWeChat {
         // 取得消息类型
         String msgType = inputMsg.getMsgType();
         // 根据消息类型获取对应的消息内容
-        if (msgType.equals(MsgType.Text.toString())) {
+        if (msgType.equals(MsgType.REQ_MESSAGE_TYPE_TEXT.toString())) {
             String resultStr = JuheRobor.getAnswerRequest(inputMsg.getContent());
             //解析json字符串
             Map maps = (Map) JSON.parse(resultStr);
-            StringBuffer str = new StringBuffer();
-            str.append("<xml>");
-            str.append("<ToUserName><![CDATA[" + custermName + "]]></ToUserName>");
-            str.append("<FromUserName><![CDATA[" + serverName + "]]></FromUserName>");
-            str.append("<CreateTime>" + returnTime + "</CreateTime>");
-            str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-//                str.append("<Content><![CDATA[你说的是：" + inputMsg.getContent() + "，吗？]]></Content>");
-            str.append("<Content><![CDATA[" + maps.get("text") + "]]></Content>");
-            str.append("</xml>");
-            response.getWriter().write(str.toString());
+            if (maps.get("url") != null && maps.get("url") != "") {
+                //以下为图文信息
+                String str = newsMsg(inputMsg, maps);
+                response.getWriter().write(str);
+            } else {
+                String str = textMsg(inputMsg, maps);
+                response.getWriter().write(str.toString());
+            }
+
         }
         // 获取并返回多图片消息
-        if (msgType.equals(MsgType.Image.toString())) {
+        if (msgType.equals(MsgType.REQ_MESSAGE_TYPE_IMAGE.toString())) {
             OutputMessage outputMsg = new OutputMessage();
             outputMsg.setFromUserName(serverName);
             outputMsg.setToUserName(custermName);
@@ -147,9 +146,43 @@ public class ConnectWeChat {
             outputMsg.setImage(images);
             System.out.println("xml转换：/n" + xs.toXML(outputMsg));
             response.getWriter().write(xs.toXML(outputMsg));
-
         }
     }
 
+    //图文信息
+    private String newsMsg(InputMessage inputMsg, Map maps) {
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + inputMsg.getFromUserName() + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + inputMsg.getToUserName() + "]]></FromUserName>");
+        str.append("<CreateTime>" + Calendar.getInstance().getTimeInMillis() / 1000 + "</CreateTime>");
+        str.append("<MsgType><![CDATA[news]]></MsgType>");
+        str.append("<ArticleCount>" + 1 + "</ArticleCount>");//图文条数
+        str.append("<Articles>");
+        str.append("<item>");
+        str.append("<Title>" + "你要的图片哦~嘿嘿嘿" + "</Title>");//消息标题
+        str.append("<Description>" + maps.get("text") + "</Description>");//消息描述
+        str.append("<PicUrl>" + "http://cdn.duitang.com/uploads/item/201408/24/20140824235002_wP4Br.thumb.224_0.jpeg" + "</PicUrl>");//消息图片
+        str.append("<Url>" + maps.get("url") + "</Url>");//图片链接
+        str.append("</item>");
+        str.append("</Articles>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    //文本信息
+    private String textMsg(InputMessage inputMsg, Map maps) {
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + inputMsg.getFromUserName() + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + inputMsg.getToUserName() + "]]></FromUserName>");
+        str.append("<CreateTime>" + Calendar.getInstance().getTimeInMillis() / 1000 + "</CreateTime>");
+        str.append("<MsgType><![CDATA[" + inputMsg.getMsgType() + "]]></MsgType>");// 取得消息类型
+        str.append("<Content><![CDATA[" + maps.get("text") + "]]></Content>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    
 }
 
