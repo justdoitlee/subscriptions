@@ -1,0 +1,6 @@
+[ERROR] [2016-10-31 15:09:31][com.wechat.base.Utils.wechat.WeChatUtils]创建菜单失败 errcode:48001 errmsg:api unauthorized hint: [jsV0AA0771rsz5!]
+[INFO] [2016-10-31 15:09:31][com.wechat.connect.controller.MenuManager]菜单创建失败，错误码：48001
+[ERROR] [2016-10-31 16:24:32][com.wechat.base.Utils.wechat.WeChatUtils]创建菜单失败 errcode:48001 errmsg:api unauthorized hint: [_l_y60272rsz5!]
+[INFO] [2016-10-31 16:24:32][com.wechat.connect.controller.MenuManager]菜单创建失败，错误码：48001
+[ERROR] [2016-10-31 16:25:37][com.wechat.base.Utils.wechat.WeChatUtils]创建菜单失败 errcode:48001 errmsg:api unauthorized hint: [syWKwA0337rsz4!]
+[INFO] [2016-10-31 16:25:37][com.wechat.connect.controller.MenuManager]菜单创建失败，错误码：48001

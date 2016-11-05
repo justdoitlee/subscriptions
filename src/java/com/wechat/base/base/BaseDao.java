@@ -13,7 +13,7 @@ public interface BaseDao<E> {
      * @param entity
      * @return
      */
-    public int save(E entity);
+    int save(E entity);
 
     /**
      * 根据主键删除
@@ -21,7 +21,7 @@ public interface BaseDao<E> {
      * @param objId
      * @return
      */
-    public int deleteByObjId(String objId);
+    int deleteByObjId(String objId);
 
     /**
      * 根据查询条件删除
@@ -29,7 +29,7 @@ public interface BaseDao<E> {
      * @param param
      * @return
      */
-    public int deleteByParam(Map<String, Object> param);
+    int deleteByParam(Map<String, Object> param);
 
     /**
      * 更新
@@ -37,7 +37,7 @@ public interface BaseDao<E> {
      * @param entity
      * @return
      */
-    public int update(E entity);
+    int update(E entity);
 
     /**
      * 根据主键更新不为空的字段
@@ -45,7 +45,7 @@ public interface BaseDao<E> {
      * @param entity
      * @return
      */
-    public int updateByIdSelective(E entity);
+    int updateByIdSelective(E entity);
 
     /**
      * 根据主键查询对象
@@ -53,7 +53,7 @@ public interface BaseDao<E> {
      * @param objId
      * @return
      */
-    public E selectByObjId(String objId);
+    E selectByObjId(String objId);
 
     /**
      * 根据条件查询结果集,包括传入分页参数
@@ -61,7 +61,7 @@ public interface BaseDao<E> {
      * @param param
      * @return
      */
-    public List<E> queryList(Map<String, Object> param);
+    List<E> queryList(Map<String, Object> param);
 
     /**
      * 根据条件查询结果集数量
@@ -69,7 +69,7 @@ public interface BaseDao<E> {
      * @param param
      * @return
      */
-    public int countList(Map<String, Object> param);
+    int countList(Map<String, Object> param);
 
 
 }

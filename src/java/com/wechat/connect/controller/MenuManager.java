@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author 李智
  * @date 2016/10/29
- * <p>
+ *
  * 菜单管理器类
  */
 public class MenuManager {
