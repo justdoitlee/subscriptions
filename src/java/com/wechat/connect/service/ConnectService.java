@@ -1,8 +1,7 @@
 package com.wechat.connect.service;
 
 import com.alibaba.fastjson.JSON;
-import com.wechat.base.Utils.wechat.JuheRobor;
-import com.wechat.base.Utils.wechat.WeChatUtils;
+import com.wechat.base.Utils.wechat.*;
 import com.wechat.connect.domain.MsgType;
 import com.wechat.message.response.Article;
 import com.wechat.message.response.NewsMessage;
@@ -39,14 +38,19 @@ public class ConnectService {
 
             // 文本消息
             if (msgType.equals(MsgType.REQ_MESSAGE_TYPE_TEXT)) {
-                String resultStr = JuheRobor.getAnswerRequest(requestMap.get("Content"));
-                //解析json字符串
-                Map maps = (Map) JSON.parse(resultStr);
-                if (maps.get("url") != null && maps.get("url") != "") {
-                    respMessage = newsMsg(requestMap, maps, "1");
-                } else {
-                    respMessage = textMsg(requestMap, maps);
-                }
+//                String resultStr = JuheRobor.getAnswerRequest(requestMap.get("Content"));
+//                //解析json字符串
+//                Map maps = (Map) JSON.parse(resultStr);
+//                if (maps.get("url") != null && maps.get("url") != "") {
+//                    respMessage = newsMsg(requestMap, maps, "1");
+//                } else {
+//                    respMessage = textMsg(requestMap, maps);
+//                }
+                Map maps = new HashMap();
+                maps.put("text", "精彩内容！");
+                maps.put("url", "http://newruanwen.cishangongde.cn/index.php?g=Admin&m=Index&a=index");
+//                respMessage = textMsg(requestMap, maps);
+                respMessage = newsMsg(requestMap,maps,"1");
             }
             // 图片消息
             else if (msgType.equals(MsgType.REQ_MESSAGE_TYPE_IMAGE)) {
@@ -125,11 +129,28 @@ public class ConnectService {
         newsMessage.setMsgType(MsgType.RESP_MESSAGE_TYPE_NEWS);
         newsMessage.setFuncFlag(0);
 
+        Template tem = new Template();
+        tem.setTemplateId("RVisRPuvBUGayWKlyDaAr11nkLlozsJe2NSLAdnO3m4");
+        tem.setTopColor("#00DD00");
+//                tem.setToUser("o8j_OwdMD7X-RtfhUb5ig4lwuSos");
+        tem.setToUser(requestMap.get("FromUserName"));
+        tem.setUrl("https://zhidao.baidu.com/question/1304159949319689899.html");
+        List<TemplateParam> paras = new ArrayList<TemplateParam>();
+        paras.add(new TemplateParam("first", "我们已收到您的货款，开始为您打包商品，请耐心等待: )", "#FF3333"));
+        paras.add(new TemplateParam("keyword1", "¥20.00", "#0044BB"));
+        paras.add(new TemplateParam("keyword2", "火烧牛干巴", "#0044BB"));
+        paras.add(new TemplateParam("keyword3", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+        paras.add(new TemplateParam("keyword4", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+        paras.add(new TemplateParam("remark", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+        tem.setTemplateParamList(paras);
+        AccessToken token = WeChatUtils.getAccessToken("wxa0ab22c43c40d7c4", "0416abf483fa1387b54f8b6c662ec2a9");
+        boolean result = WeChatUtils.sendTemplateMsg(token.getToken(), tem);
+
         List<Article> articleList = new ArrayList<Article>();
         // 单图文消息
         if ("1".equals(level)) {
             Article article = new Article();
-            article.setTitle("李智的微信订阅号");
+            article.setTitle("往期精彩");
             article.setDescription(maps.get("text").toString());
             article.setPicUrl("http://cdn.duitang.com/uploads/item/201408/24/20140824235002_wP4Br.thumb.224_0.jpeg");
             article.setUrl(maps.get("url").toString());

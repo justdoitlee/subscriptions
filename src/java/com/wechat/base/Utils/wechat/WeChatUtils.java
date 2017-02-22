@@ -1,11 +1,13 @@
 package com.wechat.base.Utils.wechat;
 
+import com.sun.deploy.net.HttpResponse;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.wechat.connect.domain.Menu;
+import com.wechat.connect.domain.MsgType;
 import com.wechat.message.response.Article;
 import com.wechat.message.response.MusicMessage;
 import com.wechat.message.response.NewsMessage;
@@ -17,6 +19,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -26,9 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -287,4 +288,105 @@ public class WeChatUtils {
 
         return result;
     }
+
+    public static boolean sendTemplateMsg(String token, Template template) {
+        boolean flag = false;
+        String requestUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+        requestUrl = requestUrl.replace("ACCESS_TOKEN", token);
+        JSONObject jsonResult = httpRequest(requestUrl, "POST", template.toJSON());
+        if (jsonResult != null) {
+            int errorCode = jsonResult.getInt("errcode");
+            String errorMessage = jsonResult.getString("errmsg");
+            if (errorCode == 0) {
+                flag = true;
+            } else {
+                System.out.println("模板消息发送失败:" + errorCode + "," + errorMessage);
+                flag = false;
+            }
+        }
+        return flag;
+    }
+
+    public static boolean sendPic(String token, String jsonMsg) {
+        boolean result = false;
+        //请求地址
+        String requestUrl = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN";
+        requestUrl = requestUrl.replace("ACCESS_TOKEN", token);
+        //发送客服消息
+        JSONObject jsonObject = httpRequest(requestUrl, "POST", jsonMsg);
+        if (null != jsonObject) {
+            int errorCode = jsonObject.getInt("errcode");
+            String errorMsg = jsonObject.getString("errmsg");
+            if (0 == errorCode) {
+                result = true;
+                System.out.println("客服消息发送成功errorCode:{" + errorCode + "},errmsg:{" + errorMsg + "}");
+            } else {
+                System.out.println("客服消息发送失败errorCode:{" + errorCode + "},errmsg:{" + errorMsg + "}");
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+//        Template tem = new Template();
+//        tem.setTemplateId("RVisRPuvBUGayWKlyDaAr11nkLlozsJe2NSLAdnO3m4");
+//        tem.setTopColor("#00DD00");
+////                tem.setToUser("o8j_OwdMD7X-RtfhUb5ig4lwuSos");
+//        tem.setToUser("o-xNQv9nuFsGbph-fDZKwyNyeYEg");
+//        tem.setUrl("https://zhidao.baidu.com/question/1304159949319689899.html");
+//        List<TemplateParam> paras = new ArrayList<TemplateParam>();
+//        paras.add(new TemplateParam("first", "我们已收到您的货款，开始为您打包商品，请耐心等待: )", "#FF3333"));
+//        paras.add(new TemplateParam("keyword1", "¥20.00", "#0044BB"));
+//        paras.add(new TemplateParam("keyword2", "火烧牛干巴", "#0044BB"));
+//        paras.add(new TemplateParam("keyword3", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+//        paras.add(new TemplateParam("keyword4", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+//        paras.add(new TemplateParam("remark", "感谢你对我们商城的支持!!!!", "#AAAAAA"));
+//        tem.setTemplateParamList(paras);
+        AccessToken token = WeChatUtils.getAccessToken("wxa0ab22c43c40d7c4", "0416abf483fa1387b54f8b6c662ec2a9");
+//        boolean result = WeChatUtils.sendTemplateMsg(token.getToken(), tem);
+
+        String strJson = "{\"touser\" :\"oe7rSjlz1flhx7HP3-DnlgrpobqM\",";
+        strJson += "\"msgtype\":\"news\",";
+        strJson += "\"news\":{";
+        strJson += "\"articles\":\"Hello World\"";
+        strJson += "}}";
+
+
+        List list = new ArrayList();
+        list.add("o-xNQv9nuFsGbph-fDZKwyNyeYEg");
+        list.add("o-xNQv5uHxpTyGlAcwqIu7E0hYbw");
+        list.add("o-xNQv7eZyopCuUS-xZURnaKkMo0");
+        list.add("o-xNQv0lUWbPQPgc-GbUmx-B2V7M");
+        list.add("o-xNQv6gRAHQJT6o8TCid8A4kBRc");
+        list.add("o-xNQv-Ho13yRxGfYtHjJXxAyWz0");
+        for(int i = 0 ;i<list.size();i++){
+            String a = "{\n" +
+                    "    \"touser\":\""+list.get(i)+"\",\n" +
+                    "    \"msgtype\":\"news\",\n" +
+                    "    \"news\":{\n" +
+                    "        \"articles\": [\n" +
+                    "         {\n" +
+                    "             \"title\":\"Happy Day\",\n" +
+                    "             \"description\":\"Is Really A Happy Day\",\n" +
+                    "             \"url\":\"http://ruanwen.cishangongde.cn/index.php?g=&m=Wei&a=index&id=1\",\n" +
+                    "             \"picurl\":\"http://cdn.duitang.com/uploads/item/201408/24/20140824235002_wP4Br.thumb.224_0.jpeg\"\n" +
+                    "         },\n" +
+                    "         {\n" +
+                    "             \"title\":\"Happy Day\",\n" +
+                    "             \"description\":\"Is Really A Happy Day\",\n" +
+                    "             \"url\":\"http://ruanwen.cishangongde.cn/index.php?g=&m=Wei&a=index&id=1\",\n" +
+                    "             \"picurl\":\"http://cdn.duitang.com/uploads/item/201408/24/20140824235002_wP4Br.thumb.224_0.jpeg\"\n" +
+                    "         }\n" +
+                    "         ]\n" +
+                    "    }\n" +
+                    "}";
+            WeChatUtils.sendPic(token.getToken(), a);
+            try {
+                Thread.sleep(1000);
+            }catch (Exception e){
+
+            }
+        }
+    }
+
 }

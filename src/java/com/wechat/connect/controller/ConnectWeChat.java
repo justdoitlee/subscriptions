@@ -1,6 +1,6 @@
 package com.wechat.connect.controller;
 
-import com.wechat.base.Utils.wechat.SignUtil;
+import com.wechat.base.Utils.wechat.*;
 import com.wechat.connect.service.ConnectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lizhi on 2016/10/16.
